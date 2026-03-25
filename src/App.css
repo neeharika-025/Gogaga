@@ -1,0 +1,159 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f3f5f9;
+  color: #1e2430;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.body-wrap {
+  display: flex;
+  height: calc(100vh - 64px);
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e2e7ef;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 6px 14px rgba(38, 53, 88, 0.06);
+}
+
+.page-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-tabs-row {
+  display: flex;
+  gap: 10px;
+}
+
+.skeleton-filter-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.skeleton-summary-row {
+  margin-top: 2px;
+}
+
+.skeleton-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.results-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.results-skeleton-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.results-skeleton-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-page {
+  min-height: calc(100vh - 110px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-text {
+  margin: 0;
+  font-size: 38px;
+  color: #24324f;
+  font-weight: 700;
+}
+
+.no-data-page {
+  min-height: calc(100vh - 110px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-data-state {
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.no-data-state-full {
+  width: 100%;
+  min-height: calc(100vh - 140px);
+}
+
+.no-data-image {
+  width: min(420px, 100%);
+  border-radius: 12px;
+  border: 1px solid #e5e9f0;
+}
+
+.no-data-title {
+  margin: 18px 0 8px;
+  font-size: 22px;
+  color: #1f2c43;
+}
+
+.no-data-text {
+  margin: 0;
+  color: #667189;
+}
+
+@media (max-width: 760px) {
+  .main-content {
+    padding: 10px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  .no-data-page,
+  .home-page,
+  .no-data-state-full {
+    min-height: calc(100vh - 120px);
+  }
+
+  .skeleton-filter-row,
+  .skeleton-cards-grid,
+  .results-skeleton-cols {
+    grid-template-columns: 1fr;
+  }
+}
