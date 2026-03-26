@@ -8,14 +8,31 @@ import TopNav from "./components/layout/TopNav/TopNav";
 import { departureFlights, returnFlights } from "./data/flights";
 
 function App() {
+  const defaultSearchState = {
+    destination: "",
+    startDate: "2026-03-12",
+    returnDate: "2026-03-17",
+  };
+
+  const popularDestinations = [
+    "Goa, India",
+    "Mumbai, India",
+    "Delhi, India",
+    "Bengaluru, India",
+    "Chennai, India",
+    "Kolkata, India",
+  ];
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState("Leads");
   const [holidayTab, setHolidayTab] = useState("Indian Holidays");
   const [packageTab, setPackageTab] = useState("Package with Flights");
 
-  const [destination, setDestination] = useState("Goa, India");
-  const [startDate, setStartDate] = useState("2026-03-12");
-  const [returnDate, setReturnDate] = useState("2026-03-17");
+  const [destination, setDestination] = useState(
+    defaultSearchState.destination,
+  );
+  const [startDate, setStartDate] = useState(defaultSearchState.startDate);
+  const [returnDate, setReturnDate] = useState(defaultSearchState.returnDate);
   const [passengers, setPassengers] = useState("2 Adults, 2 Children");
 
   const [hotelStandard, setHotelStandard] = useState("5");
@@ -24,8 +41,12 @@ function App() {
   const [stopFilter, setStopFilter] = useState("All");
   const [timeFilter, setTimeFilter] = useState("Any");
   const [airlineFilter, setAirlineFilter] = useState("All Airlines");
+  const [appliedSearch, setAppliedSearch] = useState(defaultSearchState);
+  const [allDepartureFlights, setAllDepartureFlights] = useState([]);
+  const [allReturnFlights, setAllReturnFlights] = useState([]);
+  const [filteredDepartureFlights, setFilteredDepartureFlights] = useState([]);
+  const [filteredReturnFlights, setFilteredReturnFlights] = useState([]);
 
-  const [showResults, setShowResults] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [isResultsLoading, setIsResultsLoading] = useState(false);
   const [selectedDeparture, setSelectedDeparture] = useState(null);
@@ -37,6 +58,13 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    setAllDepartureFlights(departureFlights);
+    setAllReturnFlights(returnFlights);
+    setFilteredDepartureFlights(departureFlights);
+    setFilteredReturnFlights(returnFlights);
+  }, []);
+
   useEffect(
     () => () => {
       if (resultsLoadTimerRef.current) {
@@ -46,18 +74,44 @@ function App() {
     [],
   );
 
-  const handleSearch = () => {
+  const executeSearch = (nextDestination = destination) => {
     if (resultsLoadTimerRef.current) {
       clearTimeout(resultsLoadTimerRef.current);
     }
 
+    setSelectedDeparture(null);
+    setSelectedReturn(null);
+    setAppliedSearch({
+      destination: nextDestination,
+      startDate,
+      returnDate,
+    });
     setIsResultsLoading(true);
-    setShowResults(false);
 
     resultsLoadTimerRef.current = setTimeout(() => {
+      const destinationQuery = String(nextDestination || "").trim();
+      const nextDepartureResults = applyFlightFilters(
+        allDepartureFlights,
+        destinationQuery,
+      );
+      const nextReturnResults = applyFlightFilters(
+        allReturnFlights,
+        destinationQuery,
+      );
+
+      setFilteredDepartureFlights(nextDepartureResults);
+      setFilteredReturnFlights(nextReturnResults);
       setIsResultsLoading(false);
-      setShowResults(true);
     }, 850);
+  };
+
+  const handleSearch = () => {
+    executeSearch(destination);
+  };
+
+  const handleQuickDestinationSelect = (nextDestination) => {
+    setDestination(nextDestination);
+    executeSearch(nextDestination);
   };
 
   const handleSectionChange = (section) => {
@@ -72,10 +126,15 @@ function App() {
       setStopFilter("All");
       setTimeFilter("Any");
       setAirlineFilter("All Airlines");
-      setShowResults(false);
+      setAppliedSearch(defaultSearchState);
       setIsResultsLoading(false);
       setSelectedDeparture(null);
       setSelectedReturn(null);
+      setDestination(defaultSearchState.destination);
+      setStartDate(defaultSearchState.startDate);
+      setReturnDate(defaultSearchState.returnDate);
+      setFilteredDepartureFlights(allDepartureFlights);
+      setFilteredReturnFlights(allReturnFlights);
       return;
     }
 
@@ -88,7 +147,6 @@ function App() {
     }
 
     setActiveSection("Home");
-    setShowResults(false);
     setIsResultsLoading(false);
   };
 
@@ -101,6 +159,57 @@ function App() {
     ...new Set([...departureFlights, ...returnFlights].map((f) => f.airline)),
   ];
 
+  const normalizeSearchValue = (value) =>
+    String(value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+  const destinationCodeMap = {
+    goa: ["goi", "gox"],
+    mumbai: ["bom"],
+    delhi: ["del"],
+    bengaluru: ["blr"],
+    bangalore: ["blr"],
+    chennai: ["maa"],
+    kolkata: ["ccu"],
+    hyderabad: ["hyd"],
+  };
+
+  const getSearchTokens = (value) =>
+    String(value || "")
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length > 1);
+
+  const expandDestinationTokens = (tokens) => {
+    const expanded = new Set(tokens);
+
+    tokens.forEach((token) => {
+      const mappedCodes = destinationCodeMap[token] || [];
+      mappedCodes.forEach((code) => expanded.add(code));
+    });
+
+    return [...expanded];
+  };
+
+  const matchesDestination = (flight, tokens) => {
+    if (!tokens.length) return true;
+
+    const searchableParts = [
+      flight.to,
+      flight.from,
+      flight.destinationCity,
+      flight.destinationAirport,
+      flight.sourceCity,
+      flight.sourceAirport,
+      flight.nearbyNote,
+    ].map(normalizeSearchValue);
+
+    return tokens.some((token) =>
+      searchableParts.some((part) => part.includes(token)),
+    );
+  };
+
   const isTimeMatch = (flight, selectedTime) => {
     if (selectedTime === "Any") return true;
     const hour = Number(flight.departureTime.split(":")[0]);
@@ -112,8 +221,16 @@ function App() {
     return hour >= 22 || hour < 5;
   };
 
-  const applyFlightFilters = (flights) =>
-    flights.filter((flight) => {
+  const applyFlightFilters = (flights, destinationQuery) => {
+    const destinationTokens = getSearchTokens(destinationQuery);
+    const expandedDestinationTokens =
+      expandDestinationTokens(destinationTokens);
+
+    return flights.filter((flight) => {
+      const destinationMatch = matchesDestination(
+        flight,
+        expandedDestinationTokens,
+      );
       const stopMatch =
         stopFilter === "All" ||
         (stopFilter === "Non-stop"
@@ -123,11 +240,38 @@ function App() {
       const airlineMatch =
         airlineFilter === "All Airlines" || flight.airline === airlineFilter;
 
-      return stopMatch && isTimeMatch(flight, timeFilter) && airlineMatch;
+      return (
+        destinationMatch &&
+        stopMatch &&
+        isTimeMatch(flight, timeFilter) &&
+        airlineMatch
+      );
     });
+  };
 
-  const filteredDepartureFlights = applyFlightFilters(departureFlights);
-  const filteredReturnFlights = applyFlightFilters(returnFlights);
+  useEffect(() => {
+    const currentDestination = String(appliedSearch.destination || "").trim();
+    setFilteredDepartureFlights(
+      applyFlightFilters(allDepartureFlights, currentDestination),
+    );
+    setFilteredReturnFlights(
+      applyFlightFilters(allReturnFlights, currentDestination),
+    );
+  }, [
+    stopFilter,
+    timeFilter,
+    airlineFilter,
+    allDepartureFlights,
+    allReturnFlights,
+    appliedSearch.destination,
+  ]);
+
+  const outboundLabel = filteredDepartureFlights.length
+    ? `Outbound: ${filteredDepartureFlights[0].from} (${filteredDepartureFlights[0].sourceCity}) to ${filteredDepartureFlights[0].to} (${filteredDepartureFlights[0].destinationCity})`
+    : "Outbound flights";
+  const returnLabel = filteredReturnFlights.length
+    ? `Return: ${filteredReturnFlights[0].from} (${filteredReturnFlights[0].sourceCity}) to ${filteredReturnFlights[0].to} (${filteredReturnFlights[0].destinationCity})`
+    : "Return flights";
   const showHomeState = !isPageLoading && activeSection === "Home";
   const showLeadsFlights =
     activeSection === "Leads" &&
@@ -234,6 +378,8 @@ function App() {
                     onStopFilterChange={setStopFilter}
                     onTimeFilterChange={setTimeFilter}
                     onAirlineFilterChange={setAirlineFilter}
+                    popularDestinations={popularDestinations}
+                    onQuickDestinationSelect={handleQuickDestinationSelect}
                     onSearch={handleSearch}
                   />
 
@@ -261,13 +407,15 @@ function App() {
                     </SkeletonTheme>
                   ) : (
                     <FlightResults
-                      showResults={showResults}
                       selectedDeparture={selectedDeparture}
                       selectedReturn={selectedReturn}
                       totalPrice={totalPrice}
                       passengers={passengers}
+                      searchedDestination={appliedSearch.destination}
                       departureFlights={filteredDepartureFlights}
                       returnFlights={filteredReturnFlights}
+                      outboundLabel={outboundLabel}
+                      returnLabel={returnLabel}
                       onSelectDeparture={setSelectedDeparture}
                       onSelectReturn={setSelectedReturn}
                     />

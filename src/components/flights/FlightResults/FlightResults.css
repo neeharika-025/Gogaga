@@ -2,6 +2,15 @@
   margin-top: 14px;
 }
 
+.flight-empty-state {
+  border: 1px dashed #c6d4ea;
+  border-radius: 10px;
+  background: #f7faff;
+  color: #3f5376;
+  padding: 14px;
+  font-weight: 600;
+}
+
 .summary-bar {
   background: linear-gradient(90deg, #0b1434 0%, #1b2f6d 52%, #244aa2 100%);
   border-radius: 10px;

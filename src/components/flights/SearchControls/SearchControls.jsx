@@ -134,6 +134,8 @@ function SearchControls({
   onStopFilterChange,
   onTimeFilterChange,
   onAirlineFilterChange,
+  popularDestinations,
+  onQuickDestinationSelect,
   onSearch,
 }) {
   const [isPassengerOpen, setIsPassengerOpen] = useState(false);
@@ -701,6 +703,26 @@ function SearchControls({
         <button className="search-btn" onClick={onSearch}>
           <FaSearch />
         </button>
+      </div>
+
+      <div className="quick-destination-row">
+        <span className="quick-destination-label">Popular Locations</span>
+        <div className="quick-destination-list">
+          {popularDestinations.map((city) => (
+            <button
+              key={city}
+              type="button"
+              className={
+                destination === city
+                  ? "quick-destination-chip active-quick-destination"
+                  : "quick-destination-chip"
+              }
+              onClick={() => onQuickDestinationSelect(city)}
+            >
+              {city.replace(", India", "")}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="filters-row">

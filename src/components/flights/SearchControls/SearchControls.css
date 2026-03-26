@@ -129,6 +129,53 @@
   box-shadow: 0 8px 16px rgba(17, 17, 17, 0.22);
 }
 
+.quick-destination-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-destination-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #52607a;
+}
+
+.quick-destination-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quick-destination-chip {
+  border: 1px solid #d8e1ee;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #3f4c66;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.quick-destination-chip:hover {
+  transform: translateY(-1px);
+  border-color: #a7b9d8;
+  box-shadow: 0 4px 10px rgba(34, 56, 94, 0.12);
+}
+
+.active-quick-destination {
+  background: #edf4ff;
+  border-color: #8fb0e2;
+  color: #294f91;
+  font-weight: 700;
+}
+
 .date-range-field {
   position: relative;
   z-index: 6;

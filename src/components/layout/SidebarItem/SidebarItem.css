@@ -10,6 +10,9 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .side-item:hover {
@@ -26,6 +29,7 @@
   width: 20px;
   display: flex;
   justify-content: center;
+  color: #5d6d8b;
 }
 
 .side-label {
@@ -41,4 +45,17 @@
 
 .side-item.active .side-arrow {
   color: #1a5edb;
+}
+
+.sidebar:not(.open) .side-item {
+  justify-content: center;
+  padding: 11px 8px;
+}
+
+.sidebar:not(.open) .side-icon {
+  width: auto;
+}
+
+.sidebar:not(.open) .side-item.active {
+  background: #dbe9ff;
 }
