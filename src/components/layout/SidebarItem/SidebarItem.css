@@ -43,6 +43,16 @@
   align-items: center;
 }
 
+.side-arrow-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .side-item.active .side-arrow {
   color: #1a5edb;
 }

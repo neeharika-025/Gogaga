@@ -25,7 +25,7 @@ function App() {
   ];
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeSection, setActiveSection] = useState("Leads");
+  const [activeSection, setActiveSection] = useState("Dashboard");
   const [holidayTab, setHolidayTab] = useState("Indian Holidays");
   const [packageTab, setPackageTab] = useState("Package with Flights");
 
@@ -116,6 +116,16 @@ function App() {
   };
 
   const handleSectionChange = (section) => {
+    if (section === "Leads Menu") {
+      if (resultsLoadTimerRef.current) {
+        clearTimeout(resultsLoadTimerRef.current);
+      }
+
+      setActiveSection("Leads Menu");
+      setIsResultsLoading(false);
+      return;
+    }
+
     if (section === "Leads") {
       if (resultsLoadTimerRef.current) {
         clearTimeout(resultsLoadTimerRef.current);
@@ -274,17 +284,27 @@ function App() {
     ? `Return: ${filteredReturnFlights[0].from} (${filteredReturnFlights[0].sourceCity}) to ${filteredReturnFlights[0].to} (${filteredReturnFlights[0].destinationCity})`
     : "Return flights";
   const showHomeState = !isPageLoading && activeSection === "Home";
+  const showDashboardState = !isPageLoading && activeSection === "Dashboard";
+  const showLeadsMenuState = !isPageLoading && activeSection === "Leads Menu";
   const showLeadsFlights =
     activeSection === "Leads" &&
     holidayTab === "Indian Holidays" &&
     packageTab === "Package with Flights";
 
-  const showNoDataState = !isPageLoading && !showLeadsFlights && !showHomeState;
+  const showNoDataState =
+    !isPageLoading &&
+    !showLeadsFlights &&
+    !showHomeState &&
+    !showDashboardState &&
+    !showLeadsMenuState;
 
   const noDataText =
     activeSection !== "Leads"
       ? `No data available for ${activeSection} section.`
       : "No data available for this holiday/package selection.";
+
+  const noDataImageUrl =
+    "https://img.freepik.com/free-vector/hand-drawn-no-data-illustration_23-2150570252.jpg?semt=ais_hybrid&w=740&q=80";
 
   return (
     <div className="app-shell">
@@ -305,11 +325,23 @@ function App() {
             <div className="home-page">
               <h1 className="home-text">Home</h1>
             </div>
-          ) : showNoDataState ? (
+          ) : showDashboardState || showLeadsMenuState ? (
             <div className="no-data-page">
               <FlightNoDataExperience
                 onGetStarted={() => handleSectionChange("Leads")}
               />
+            </div>
+          ) : showNoDataState ? (
+            <div className="no-data-page">
+              <div className="no-data-state no-data-state-full">
+                <img
+                  className="no-data-image"
+                  src={noDataImageUrl}
+                  alt="No data"
+                />
+                <h3 className="no-data-title">No data</h3>
+                <p className="no-data-text">{noDataText}</p>
+              </div>
             </div>
           ) : (
             <section className="panel">

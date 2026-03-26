@@ -13,7 +13,10 @@ function FlightNoDataExperience({ onGetStarted }) {
     >
       <div className="sky-overlay" />
       <div className="welcome-block static-block">
-        <h2 className="welcome-title">Welcome Aboard <FaPlane className="btn-planes" /></h2>
+        <h2 className="welcome-title">
+          <span>Welcome Aboard</span>
+          <FaPlane className="btn-planes" />
+        </h2>
         <p className="welcome-subtitle">Your dashboard is ready for takeoff</p>
 
         <button

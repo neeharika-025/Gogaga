@@ -113,12 +113,17 @@
 
 .search-btn {
   width: 54px;
+  height: 58px;
   border: 0;
   border-radius: 8px;
   background: #111;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   font-size: 16px;
+  line-height: 1;
   transition:
     transform 0.16s ease,
     box-shadow 0.2s ease;

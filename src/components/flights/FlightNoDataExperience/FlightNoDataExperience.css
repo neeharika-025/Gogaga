@@ -52,6 +52,9 @@
   color: #23344e;
   letter-spacing: -0.02em;
   text-shadow: 0 6px 18px rgba(255, 255, 255, 0.75);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .welcome-subtitle {
@@ -83,8 +86,7 @@
 }
 .btn-planes {
   font-size: 1.6rem;
-  vertical-align: middle;
-  margin-left: 8px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 760px) {

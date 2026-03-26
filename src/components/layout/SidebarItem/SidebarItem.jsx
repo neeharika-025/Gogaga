@@ -2,7 +2,15 @@ import React from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import "./SidebarItem.css";
 
-function SidebarItem({ icon, label, active, collapsed, onClick }) {
+function SidebarItem({
+  icon,
+  label,
+  active,
+  expanded,
+  collapsed,
+  onClick,
+  onArrowClick,
+}) {
   return (
     <button
       type="button"
@@ -14,9 +22,21 @@ function SidebarItem({ icon, label, active, collapsed, onClick }) {
       <span className="side-icon">{icon}</span>
       {!collapsed && <span className="side-label">{label}</span>}
       {!collapsed && (
-        <span className="side-arrow" aria-hidden="true">
-          {active ? <FaChevronDown /> : <FaChevronRight />}
-        </span>
+        <button
+          type="button"
+          className="side-arrow-btn"
+          aria-label={expanded ? `Collapse ${label}` : `Expand ${label}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            if (onArrowClick) {
+              onArrowClick();
+            }
+          }}
+        >
+          <span className="side-arrow" aria-hidden="true">
+            {expanded ? <FaChevronDown /> : <FaChevronRight />}
+          </span>
+        </button>
       )}
     </button>
   );
