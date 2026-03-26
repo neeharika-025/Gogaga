@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import FlightNoDataExperience from "./components/flights/FlightNoDataExperience/FlightNoDataExperience";
 import FlightResults from "./components/flights/FlightResults/FlightResults";
 import SearchControls from "./components/flights/SearchControls/SearchControls";
 import Sidebar from "./components/layout/Sidebar/Sidebar";
@@ -306,15 +307,9 @@ function App() {
             </div>
           ) : showNoDataState ? (
             <div className="no-data-page">
-              <div className="no-data-state no-data-state-full">
-                <img
-                  className="no-data-image"
-                  src="https://img.freepik.com/free-vector/hand-drawn-no-data-illustration_23-2150570252.jpg?semt=ais_hybrid&w=740&q=80"
-                  alt="No data"
-                />
-                <h3 className="no-data-title">No data</h3>
-                <p className="no-data-text">{noDataText}</p>
-              </div>
+              <FlightNoDataExperience
+                onGetStarted={() => handleSectionChange("Leads")}
+              />
             </div>
           ) : (
             <section className="panel">
